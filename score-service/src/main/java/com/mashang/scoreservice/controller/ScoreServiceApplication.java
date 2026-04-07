@@ -1,4 +1,4 @@
-package com.mashang.scoreservice;
+package com.mashang.scoreservice.controller;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
