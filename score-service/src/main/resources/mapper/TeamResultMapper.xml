@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.scoreservice.mapper.TeamResultMapper">
+
+    <select id="selectByItemId" resultType="com.mashang.scoreservice.domain.vo.TeamResultVo">
+        SELECT
+            tr.team_result_id,
+            tr.team_entry_id,
+            tr.item_id,
+            tr.score,
+            tr.rank,
+            tr.create_time
+        FROM
+            team_result AS tr
+        WHERE
+            tr.item_id = #{itemId}
+            AND tr.del_flag = 0
+        ORDER BY
+            tr.score DESC
+    </select>
+
+    <select id="selectByMeetingId" resultType="com.mashang.scoreservice.domain.vo.TeamResultVo">
+        SELECT
+            tr.team_result_id,
+            tr.team_entry_id,
+            tr.item_id,
+            tr.score,
+            tr.rank,
+            tr.create_time
+        FROM
+            team_result AS tr
+        WHERE
+            tr.meeting_id = #{meetingId}
+            AND tr.del_flag = 0
+        ORDER BY
+            tr.score DESC
+    </select>
+
+</mapper>

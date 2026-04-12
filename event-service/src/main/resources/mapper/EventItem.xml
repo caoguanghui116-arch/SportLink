@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.eventservice.mapper.EventItemMapper">
+
+    <select id="allItem" resultType="com.mashang.eventservice.domain.vo.EventItemVo">
+        SELECT
+         item_id,
+         item_name
+        FROM
+        event_item
+    </select>
+</mapper>

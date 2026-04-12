@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.socialservice.mapper.BulletChatMapper">
+
+    <select id="selectByMeetingId" resultType="com.mashang.socialservice.domain.vo.BulletChatVo">
+        SELECT
+            b.chat_id,
+            b.meeting_id,
+            b.user_id,
+            b.content,
+            b.create_time
+        FROM
+            bullet_chat AS b
+        WHERE
+            b.meeting_id = #{meetingId}
+        ORDER BY b.create_time DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

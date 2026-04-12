@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.socialservice.mapper.PostMapper">
+
+    <select id="selectByMeetingId" resultType="com.mashang.socialservice.domain.vo.PostVo">
+        SELECT
+            p.post_id,
+            p.user_id,
+            p.meeting_id,
+            p.content,
+            p.image_url,
+            p.like_count,
+            p.comment_count,
+            p.create_time
+        FROM
+            post AS p
+        WHERE
+            p.meeting_id = #{meetingId}
+            AND p.status = 0
+            AND p.del_flag = 0
+        ORDER BY p.create_time DESC
+    </select>
+
+    <select id="selectDetailById" resultType="com.mashang.socialservice.domain.vo.PostVo">
+        SELECT
+            p.post_id,
+            p.user_id,
+            p.meeting_id,
+            p.content,
+            p.image_url,
+            p.like_count,
+            p.comment_count,
+            p.create_time
+        FROM
+            post AS p
+        WHERE
+            p.post_id = #{postId}
+            AND p.del_flag = 0
+    </select>
+
+    <update id="updateLikeCount">
+        UPDATE post
+        SET like_count = like_count + #{increment}
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="updateCommentCount">
+        UPDATE post
+        SET comment_count = comment_count + #{increment}
+        WHERE post_id = #{postId}
+    </update>
+
+</mapper>
