@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        Gateway 网关服务
+        职责：统一入口、JWT 鉴权、路由转发、跨域处理
+        技术选型：Spring Cloud Gateway（WebFlux 响应式，性能优于 Zuul）
+    -->
+    <parent>
+        <groupId>com.mashang</groupId>
+        <artifactId>SportLink</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>gateway-service</artifactId>
+
+    <dependencies>
+        <!-- ==================== 核心网关 ==================== -->
+
+        <!-- Spring Cloud Gateway：基于 WebFlux 的响应式网关，支持动态路由、过滤器链 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+
+        <!-- ==================== 服务治理 ==================== -->
+
+        <!-- Nacos 服务发现：网关通过 Nacos 获取下游服务实例列表，实现 lb:// 负载均衡路由 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- Nacos 配置中心：网关的路由规则、白名单等配置可托管到 Nacos，支持动态刷新 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- ==================== 认证鉴权 ==================== -->
+
+        <!-- java-jwt (Auth0)：在网关层解析和校验 JWT 令牌，提取 userId -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.10.3</version>
+        </dependency>
+
+        <!-- Spring Data Redis：网关通过 Redis 校验 JWT 会话是否有效（用户是否已登出） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Jedis：Redis 连接池客户端，性能优于 Lettuce 在高并发写入场景 -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+
+        <!-- ==================== 工具类 ==================== -->
+
+        <!-- Fastjson：网关返回 401 时序列化 JSON 响应体 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.75</version>
+        </dependency>
+
+        <!-- Lombok：简化 @Slf4j 等样板代码 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot 打包插件：打 Fat Jar，内置 Tomcat 替换为 Netty（WebFlux 默认） -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

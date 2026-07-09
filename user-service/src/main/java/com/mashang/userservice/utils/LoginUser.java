@@ -2,76 +2,116 @@ package com.mashang.userservice.utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mashang.userservice.domain.entity.SysUser;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-
+/**
+ * Spring Security 登录用户封装 —— 实现 UserDetails 接口。
+ *
+ * 作用：
+ * 1. 桥接系统用户实体 (SysUser) 与 Spring Security 的认证体系
+ * 2. 提供角色权限信息（admin / referee / athlete）
+ * 3. 支持 Redis 序列化存储（@JsonIgnoreProperties 防止反序列化失败）
+ *
+ * 角色体系说明：
+ * - admin    (roleId=1)：管理员，拥有所有权限
+ * - referee  (roleId=2)：裁判，可管理运动员、查看/录入成绩
+ * - athlete  (roleId=3)：运动员，查看赛程、报名、查看成绩
+ * - 权限继承：高等级角色自动拥有低等级角色的所有权限
+ */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-// 解决后续redis读取数据时反序列化报错
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)  // Redis 反序列化时忽略未知字段
 public class LoginUser implements UserDetails {
 
-    //UserDetails 原生security自带的实体类
+    /** 系统用户实体 */
+    private SysUser user;
 
-    // 将SysUser与SpringSecurity的登录信息相结合
-    private SysUser user;//自定义的登陆对象
-
-    //权限相关
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+    public LoginUser(SysUser user) {
+        this.user = user;
     }
 
     /**
-     * 框架中会自动调用获取用户名和密码的操作，所以返回值要重写一下
-     * @return
+     * 获取用户权限集合 —— 根据 roleId 授予对应的 GrantedAuthority。
+     *
+     * 权限继承规则：
+     * - admin (roleId=1) → [admin, referee, athlete]  // 管理员拥有全部权限
+     * - referee (roleId=2) → [referee, athlete]         // 裁判拥有自己和运动员的权限
+     * - athlete (roleId=3) → [athlete]                  // 运动员仅有自己的权限
+     *
+     * 注意：每新增一个角色等级，需要在此处添加对应的 case 分支
      */
     @Override
-    public String getPassword() {
-        return user.getPassword();//换成用户自己的
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (user.getRoleId() != null) {
+            switch (user.getRoleId().intValue()) {
+                case 1:  // admin
+                    authorities.add(new SimpleGrantedAuthority("admin"));
+                    authorities.add(new SimpleGrantedAuthority("referee"));
+                    authorities.add(new SimpleGrantedAuthority("athlete"));
+                    break;
+                case 2:  // referee
+                    authorities.add(new SimpleGrantedAuthority("referee"));
+                    authorities.add(new SimpleGrantedAuthority("athlete"));
+                    break;
+                case 3:  // athlete
+                    authorities.add(new SimpleGrantedAuthority("athlete"));
+                    break;
+                default:
+                    // 未知角色：不授予任何权限
+                    break;
+            }
+        }
+        return authorities;
     }
 
+    // ==================== UserDetails 接口实现 ====================
+
+    /** 返回密码（给 AuthenticationManager 认证用） */
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    /** 返回用户名（登录凭据） */
     @Override
     public String getUsername() {
         return user.getUsername();
     }
 
-    /**
-     *     布尔值记得改为True，否则可能无法访问，查询账号是否过期
-     */
+    /** 账户是否未过期 */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-    /**
-     *     判断当前账户是否被锁住
-     */
+    /** 账户是否未锁定 */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
-    /**
-     *     判断当前密码是否过期
-     */
+    /** 密码是否未过期 */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     /**
-     *     判断账户是否可用(是否被删除)
+     * 账户是否可用 —— 根据 status 字段判断。
+     * status = "0"：正常启用
+     * status = "1"：停用（禁止登录）
      */
     @Override
     public boolean isEnabled() {
-        return true;
+        return "0".equals(user.getStatus());
     }
 }

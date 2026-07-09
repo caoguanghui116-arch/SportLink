@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.userservice.mapper.SysMenuMapper">
+
+    <select id="selectByRoleId" resultType="com.mashang.userservice.domain.entity.SysMenu">
+        SELECT
+            sm.menu_id,
+            sm.menu_name,
+            sm.path,
+            sm.perms,
+            sm.parent_id,
+            sm.sort
+        FROM
+            sys_menu AS sm
+        INNER JOIN
+            sys_role_menu AS srm ON sm.menu_id = srm.menu_id
+        WHERE
+            srm.role_id = #{roleId}
+        ORDER BY
+            sm.parent_id, sm.sort
+    </select>
+
+</mapper>

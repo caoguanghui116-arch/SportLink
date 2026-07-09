@@ -8,6 +8,7 @@ import com.mashang.scoreservice.domain.vo.RankingVo;
 import com.mashang.scoreservice.domain.vo.TeamResultVo;
 import com.mashang.scoreservice.service.IPersonalResultService;
 import com.mashang.scoreservice.service.ITeamResultService;
+import com.mashang.scoreservice.mq.ScoreProducer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -28,11 +29,18 @@ public class ScoreController {
     @Autowired
     private ITeamResultService teamResultService;
 
+    @Autowired
+    private ScoreProducer scoreProducer;
+
     @ApiOperation("个人成绩录入")
     @PostMapping("/personal/entry")
     public R personalEntry(@RequestBody @Validated PersonalResultQuery query) {
-
-        return R.toResult(personalResultService.entry(query));
+        int result = personalResultService.entry(query);
+        // 成绩录入后异步发送通知
+        if (result > 0) {
+            scoreProducer.sendScorePublishNotification(query.getUserId(), "项目" + query.getItemId(), String.valueOf(query.getScore()));
+        }
+        return R.toResult(result);
     }
 
     @ApiOperation("团体成绩录入")

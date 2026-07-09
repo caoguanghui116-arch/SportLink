@@ -4,48 +4,103 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- ================================================================
+         SportLink 校园运动会管理平台 —— 父 POM
+         作用：统一管理所有微服务的依赖版本，避免版本冲突
+         模块：common-service / gateway-service / social-service
+               (其他模块各自继承本 POM，但未在 modules 中显式声明)
+         Spring Cloud 版本对应关系：
+           Spring Boot 2.3.2 → Spring Cloud Hoxton.SR9 → Spring Cloud Alibaba 2.2.6
+         ================================================================ -->
     <groupId>com.mashang</groupId>
     <artifactId>SportLink</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <!-- 显式声明的模块（构建顺序：common 先编译，其他服务依赖 common） -->
     <modules>
         <module>common-service</module>
+        <module>gateway-service</module>
         <module>social-service</module>
     </modules>
 
+    <!-- Spring Boot 父 POM：提供默认插件配置、依赖版本管理 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.3.2.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/> <!-- 从远程仓库拉取，不依赖本地路径 -->
     </parent>
 
+    <!-- 版本属性：统一管理，一处修改全局生效 -->
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
     </properties>
 
+    <!-- ==================== 公共依赖（所有模块自动继承） ==================== -->
     <dependencies>
-        <!--nacos客户端-->
+        <!-- ===== 服务治理 ===== -->
+
+        <!-- Nacos 服务发现：服务启动时自动注册到 Nacos，并定时发送心跳保活 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-        <!--feifn组件-->
+        <!-- Nacos 配置中心：从 Nacos 拉取共享配置，支持配置热更新 (@RefreshScope) -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- ===== 服务间调用 ===== -->
+
+        <!-- OpenFeign 声明式 HTTP 客户端：通过接口 + 注解即可调用其他微服务，无需手写 HTTP 代码 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+        <!-- ===== 熔断降级 ===== -->
+
+        <!-- Hystrix 熔断器：Feign 调用失败时自动熔断，防止级联故障导致服务雪崩 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
+
+        <!-- ===== 异步消息 ===== -->
+
+        <!-- RocketMQ 消息队列：用于通知/成绩发布等非核心链路的异步解耦（Producer + Consumer） -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+
+        <!-- ===== 流量控制 ===== -->
+
+        <!-- Sentinel 流量控制与熔断降级：
+             功能：QPS 限流、慢调用熔断、热点参数限流、系统自适应保护
+             控制台：启动 sentinel-dashboard.jar 后访问 localhost:8080 查看实时流量 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+
+        <!-- Sentinel 规则持久化到 Nacos：重启后保留限流规则，无需重新配置 -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
         </dependency>
     </dependencies>
+
+    <!-- ==================== 依赖版本管理（仅声明版本，子模块按需引入） ==================== -->
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud 全系列组件版本（Hoxton.SR9） -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -54,6 +109,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Spring Cloud Alibaba 全系列组件版本（2.2.6.RELEASE） -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>

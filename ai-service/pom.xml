@@ -3,8 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ai-service uses Spring Boot 4.0.5 / Java 17 for Spring AI compatibility -->
-    <!-- Does NOT inherit from SportLink parent pom to keep its own version -->
+    <!-- ================================================================
+         AI 编排服务 —— 基于 Spring AI 实现 RAG（检索增强生成）模式。
+         不继承 SportLink 父 POM 的原因：Spring AI 需要 Java 17 + Spring Boot 3.x+
+         其他服务使用 Java 8 + Spring Boot 2.3.2，技术栈隔离，互不影响。
+         ================================================================ -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -25,88 +28,105 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Boot Web -->
+        <!-- ==================== 基础框架 ==================== -->
+
+        <!-- Spring Boot Web：内嵌 Tomcat，提供 REST API -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Boot Test -->
+        <!-- Spring Boot Test：单元测试 & 集成测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- Lombok -->
+        <!-- Lombok：简化 @Slf4j / @Data 等样板代码 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- Knife4j (Swagger) - Jakarta version for Spring Boot 3.x+ -->
+        <!-- ==================== API 文档 ==================== -->
+
+        <!-- Knife4j (OpenAPI 3 + Jakarta) —— 注意：与旧服务的 Swagger 2 版本不同 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.4.0</version>
         </dependency>
 
-        <!-- Hibernate Validator -->
+        <!-- ==================== 参数校验 ==================== -->
+
+        <!-- Hibernate Validator：@NotNull / @Validated 等 JSR-380 标准校验 -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <scope>compile</scope>
         </dependency>
 
-        <!-- Jackson -->
+        <!-- ==================== JSON 处理 ==================== -->
+
+        <!-- Jackson：Spring Boot 默认 JSON 序列化框架 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- Fastjson -->
+        <!-- Fastjson：Alibaba 高性能 JSON 库（用于内部 RAG 上下文数据序列化） -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.75</version>
         </dependency>
 
-        <!-- Common Service (shared utilities, constants, etc.) -->
+        <!-- ==================== 公共模块 ==================== -->
+
+        <!-- common-service：共享工具类、常量（注意：该模块基于 Java 8 编译） -->
         <dependency>
             <groupId>com.mashang</groupId>
             <artifactId>common-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- Nacos Discovery -->
+        <!-- ==================== 服务治理 ==================== -->
+
+        <!-- Nacos 服务发现：注册到 Nacos & 拉取其他服务实例列表 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-        <!-- Nacos Config -->
+        <!-- Nacos 配置中心：从 Nacos 读取共享配置（AI API Key 等敏感配置） -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!-- OpenFeign -->
+        <!-- ==================== 服务间调用 ==================== -->
+
+        <!-- OpenFeign：通过声明式接口调用其他微服务，获取 RAG 上下文数据 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-        <!-- Spring AI (for future AI integration) -->
-        <!-- Uncomment when Spring AI is available for your Spring Boot version -->
-        <!--
+        <!-- ==================== AI 大模型接入 ==================== -->
+
+        <!-- Spring AI DashScope (通义千问)：
+             ChatClient 统一抽象，可无缝切换 OpenAI / 文心一言 / Ollama 等
+             注意：当前使用 Milestone 版本，生产环境可升级为 GA 版本 -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+            <artifactId>spring-ai-dashscope-spring-boot-starter</artifactId>
+            <version>1.0.0-M5</version>
         </dependency>
-        -->
     </dependencies>
 
+    <!-- ==================== 依赖版本管理 ==================== -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -126,6 +146,20 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- ==================== 仓库配置 ==================== -->
+
+    <!-- Spring Milestones 仓库：Spring AI 的 Milestone 版本托管在此 -->
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>

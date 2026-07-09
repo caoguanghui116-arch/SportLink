@@ -1,5 +1,7 @@
 package com.mashang.registrationservice.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.mashang.registrationservice.domain.entity.R;
 import com.mashang.registrationservice.domain.query.create.PersonalEntryQuery;
 import com.mashang.registrationservice.domain.query.create.TeamEntryQuery;
@@ -17,6 +19,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 报名服务 Controller —— 个人/团队报名的 REST API。
+ *
+ * 流量控制：
+ * - 个人报名 & 团队报名接口标注了 @SentinelResource
+ * - 报名高峰期间超过 QPS 阈值自动拒绝，返回友好提示
+ * - 限流规则在 SentinelRuleConfig 中定义
+ */
 @Api(tags = "报名服务")
 @RestController
 @RequestMapping("/registration")
@@ -28,10 +38,25 @@ public class RegistrationController {
     @Autowired
     private ITeamEntryService teamEntryService;
 
+    // ==================== 个人报名 ====================
+
+    /**
+     * 个人报名 —— Sentinel 限流保护。
+     * 资源名 "personalEntry" 与 SentinelRuleConfig 中的规则对应
+     */
     @ApiOperation("个人报名")
+    @SentinelResource(value = "personalEntry", blockHandler = "enrollBlockHandler")
     @PostMapping("/personal/enroll")
     public R personalEnroll(@RequestBody @Validated PersonalEntryQuery query) {
         return R.toResult(personalEntryService.enroll(query));
+    }
+
+    /**
+     * Sentinel 限流/降级后的 fallback 方法。
+     * 参数签名必须与原方法完全一致，额外加上 BlockException 参数。
+     */
+    public R enrollBlockHandler(PersonalEntryQuery query, BlockException ex) {
+        return R.fail("报名人数过多，系统正在排队处理，请稍后再试");
     }
 
     @ApiOperation("取消个人报名")
@@ -59,10 +84,21 @@ public class RegistrationController {
         return R.ok(personalEntryService.countByItemId(itemId));
     }
 
+    // ==================== 团队报名 ====================
+
+    /**
+     * 团队报名 —— Sentinel 限流保护。
+     * 资源名 "teamEntry" 与 SentinelRuleConfig 中的规则对应
+     */
     @ApiOperation("团队报名")
+    @SentinelResource(value = "teamEntry", blockHandler = "teamEnrollBlockHandler")
     @PostMapping("/team/enroll")
     public R teamEnroll(@RequestBody @Validated TeamEntryQuery query) {
         return R.toResult(teamEntryService.enroll(query));
+    }
+
+    public R teamEnrollBlockHandler(TeamEntryQuery query, BlockException ex) {
+        return R.fail("团队报名人数过多，请稍后再试");
     }
 
     @ApiOperation("添加团队成员")

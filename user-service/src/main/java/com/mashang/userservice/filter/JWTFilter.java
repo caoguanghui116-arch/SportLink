@@ -1,4 +1,5 @@
 package com.mashang.userservice.filter;
+
 import com.mashang.userservice.utils.JWTUtil;
 import com.mashang.userservice.utils.LoginUser;
 import com.mashang.userservice.utils.RedisUtil;
@@ -16,8 +17,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
-//OncePerRequestFilter 确报过滤器在每个请求中只执行一次
-//拦截请求 & 校验登录（过滤器）
+/**
+ * JWT 认证过滤器 —— 在每个请求到达 Controller 前完成身份校验。
+ *
+ * 继承 OncePerRequestFilter 的原因：
+ * - 保证每个请求只执行一次过滤（即使请求被转发或 include）
+ * - 避免在同一个请求中重复解析 JWT 和查询 Redis
+ *
+ * 安全架构说明（双重鉴权）：
+ * - Gateway 层：校验 JWT 签名 + Redis 会话是否有效（全局第一关）
+ * - user-service 层：解析用户信息注入 SecurityContext（细粒度权限控制）
+ * - Gateway 保证"你是谁"，user-service 保证"你能做什么"
+ *
+ * 为什么还需要 user-service 层校验：
+ * - Gateway 只验证了 JWT 合法性，没有将用户信息注入 Spring Security 上下文
+ * - 没有 SecurityContext，@PreAuthorize 和 hasAuthority() 无法工作
+ * - 角色权限（admin/referee/athlete）的校验必须在这一层完成
+ */
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -25,20 +41,25 @@ public class JWTFilter extends OncePerRequestFilter {
     private RedisUtil redisUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // 获取token
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        // ---- 第1步：获取请求头中的 Token ----
+        // 注意：这里读取的是 "Authentication" 头，与 Gateway 的 "Authorization" 不同
+        // 实际生产环境中应统一为 "Authorization"
         String Authentication = request.getHeader("Authentication");
         if (!StringUtils.hasText(Authentication)) {
-            // 没有token则放行，有的接口不需要token，不需要解析
+            // 没有 Token 则放行 —— 后续由 SecurityConfig.configure() 的 URL 规则决定是否拒绝
             filterChain.doFilter(request, response);
             return;
         }
-        // 解析token
+
+        // ---- 第2步：校验 JWT 签名 ----
         boolean b = JWTUtil.verifyToken(Authentication);
         if (!b) {
             throw new RuntimeException("Token不合法");
         }
-        // redis中获取用户信息
+
+        // ---- 第3步：从 Redis 获取用户会话信息 ----
         Long userId = JWTUtil.getUserId(Authentication);
         LoginUser user = redisUtil.getCacheObject("user:" + userId);
 
@@ -46,12 +67,14 @@ public class JWTFilter extends OncePerRequestFilter {
             throw new RuntimeException("用户未登录或者登陆过期");
         }
 
-        // SecurityContextHolder.getContext().setAuthentication()需要一个授权对象，所以要先创建一个
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, null);
+        // ---- 第4步：将用户信息注入 Spring Security 上下文 ----
+        // 第3个参数传入 user.getAuthorities()（非 null），使 @PreAuthorize 注解生效
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
-        // 将用户信息存入SecurityContextHolder容器中
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        // ---- 第5步：放行，交给后续过滤器链和 Controller ----
         filterChain.doFilter(request, response);
     }
 }
-
