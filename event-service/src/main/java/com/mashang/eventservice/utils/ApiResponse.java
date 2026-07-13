@@ -1,6 +1,6 @@
 package com.mashang.eventservice.utils;
 
-import com.mashang.eventservice.domain.entity.R;
+import com.mashang.common.common.R;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

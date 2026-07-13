@@ -1,7 +1,7 @@
 package com.mashang.scoreservice.feign;
 
 import com.mashang.scoreservice.config.FeignConfig;
-import com.mashang.scoreservice.domain.entity.R;
+import com.mashang.common.common.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

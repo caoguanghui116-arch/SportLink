@@ -1,6 +1,6 @@
 package com.mashang.aiservice.utils;
 
-import com.mashang.aiservice.domain.entity.R;
+import com.mashang.common.common.R;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

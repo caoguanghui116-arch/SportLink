@@ -1,6 +1,6 @@
 package com.mashang.scoreservice.utils;
 
-import com.mashang.scoreservice.domain.entity.R;
+import com.mashang.common.common.R;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

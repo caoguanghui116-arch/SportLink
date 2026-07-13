@@ -1,6 +1,6 @@
 package com.mashang.registrationservice.utils;
 
-import com.mashang.registrationservice.domain.entity.R;
+import com.mashang.common.common.R;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

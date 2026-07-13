@@ -2,7 +2,7 @@ package com.mashang.socialservice.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.socialservice.domain.entity.BulletChat;
-import com.mashang.socialservice.domain.entity.R;
+import com.mashang.common.common.R;
 import com.mashang.socialservice.domain.query.create.BulletChatQuery;
 import com.mashang.socialservice.domain.vo.BulletChatVo;
 import com.mashang.socialservice.feign.UserServiceFeign;

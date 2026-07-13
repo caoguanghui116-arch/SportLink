@@ -1,6 +1,6 @@
 package com.mashang.registrationservice.utils;
 
-import com.mashang.registrationservice.constant.HttpStatus;
+import com.mashang.common.constants.HttpStatus;
 
 import java.util.HashMap;
 

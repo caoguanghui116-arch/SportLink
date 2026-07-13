@@ -1,7 +1,7 @@
 package com.mashang.notificationservice.feign;
 
 import com.mashang.notificationservice.config.FeignConfig;
-import com.mashang.notificationservice.domain.entity.R;
+import com.mashang.common.common.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
