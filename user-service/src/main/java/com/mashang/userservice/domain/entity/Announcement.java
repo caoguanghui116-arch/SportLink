@@ -11,14 +11,18 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+/**
+ * 公告实体
+ */
 public class Announcement {
 
     @TableId(type = IdType.AUTO)
-    private Long announcementId;
+    private Long annoId;
     private String title;
     private String content;
     private Long meetingId;
-    private Long publisherId;
+    private Long publisherUserId;
     private Long status;
     private Date createTime;
     private Date updateTime;

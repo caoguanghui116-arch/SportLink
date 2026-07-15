@@ -11,6 +11,10 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+/**
+ * 角色实体
+ */
 public class SysRole {
 
     @TableId(type = IdType.AUTO)

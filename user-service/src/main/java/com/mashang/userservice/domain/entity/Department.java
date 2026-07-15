@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+/**
+ * 部门实体
+ */
 public class Department {
 
     @TableId(type = IdType.AUTO)

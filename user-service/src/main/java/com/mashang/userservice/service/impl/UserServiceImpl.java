@@ -18,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -161,6 +163,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         }
 
         SysUser user = new SysUser();
+        Date now = new Date();
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
         user.setUsername(query.getUsername());
         // 密码 BCrypt 加密后再存储 —— 数据库中永不保存明文密码
         // BCrypt 特点：每次加密生成随机盐值，相同密码多次加密结果不同

@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ * 菜单权限实体
+ */
 public class SysMenu {
 
     @TableId(type = IdType.AUTO)

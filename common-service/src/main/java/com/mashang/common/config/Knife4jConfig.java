@@ -1,15 +1,19 @@
 package com.mashang.common.config;
 
+import io.swagger.models.auth.In;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Knife4j (Swagger2) 自动配置 —— 统一生成所有微服务的 API 文档。
@@ -46,11 +50,14 @@ public class Knife4jConfig {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())                        // API 文档的标题、描述、版本等基本信息
+                .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.mashang"))  // 扫描 com.mashang 包下所有 Controller
-                .paths(PathSelectors.any())               // 所有路径都生成文档，不做过滤
-                .build();
+                .apis(RequestHandlerSelectors.basePackage("com.mashang"))
+                .paths(PathSelectors.any())
+                .build()
+                // 缺失的两行鉴权挂载代码！
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts());
     }
 
     /**
@@ -61,10 +68,56 @@ public class Knife4jConfig {
      */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("SportLink 校园运动会管理平台 API")
+                .title("SportLink 赛讯通平台")
                 .description("基于 RESTful 规范，提供用户、赛事、报名、成绩、社交、通知、AI 等服务的统一接口文档")
                 .version("1.0.0")
-                .contact(new Contact("SportLink Team", "", ""))
+                .contact(new Contact("CGH", "", "你猜"))
                 .build();
+    }
+
+//     * 安全模式，这里指定token通过Authorization头请求头传递
+//     * 告诉 Swagger 页面，你的系统鉴权 Token 是放在 HTTP 请求头 Authorization 里传递的，
+//     * 并且在页面上提供一个输入框让你填 Token，发请求时自动带上这个请求头。
+//     */
+
+
+    //只做一件事：告诉 Swagger，你的 Token 存在HTTP 请求头 Authorization里，页面右上角会出现 Authorize 输入框让你填 Token。
+    //它只是定义了有这么一套鉴权方式，但没说这套鉴权要作用在哪些接口。
+    private List<SecurityScheme> securitySchemes()
+    {
+        List<SecurityScheme> apiKeyList = new ArrayList<SecurityScheme>();
+        apiKeyList.add(new ApiKey("Authorization", "Authorization", In.HEADER.toValue()));
+        return apiKeyList;
+    }
+
+    /**
+     * 安全上下文
+     */
+    //它的职责是：把上面定义好的 Authorization 鉴权规则，绑定到指定接口路径上。
+    //没有这段：就算你在 Swagger 填了 Token，发请求也不会自动带上 Authorization 请求头，所有需要登录的接口都会 403；
+    //有这段：匹配到的接口，发起调试请求时自动附加你填好的 Token 头。
+    private List<SecurityContext> securityContexts()
+    {
+        List<SecurityContext> securityContexts = new ArrayList<>();
+        securityContexts.add(
+                SecurityContext.builder()
+                        .securityReferences(defaultAuth())
+                        .forPaths(PathSelectors.any())
+                        .build());
+        return securityContexts;
+    }
+
+    /**
+     * 默认的安全上引用
+     */
+    //搭起「Token 鉴权规则」和「接口生效范围」之间的桥梁
+    private List<SecurityReference> defaultAuth()
+    {
+        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        List<SecurityReference> securityReferences = new ArrayList<>();
+        securityReferences.add(new SecurityReference("Authorization", authorizationScopes));
+        return securityReferences;
     }
 }

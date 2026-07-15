@@ -13,6 +13,10 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+/**
+ * 运动员实体
+ */
 public class Athlete {
 
     @TableId(type = IdType.AUTO)

@@ -25,7 +25,7 @@ public class JWTUtil {
         String token = JWT.create().withClaim("userId", user.getUserId())
                 .withClaim("username", user.getUsername())
                 .withExpiresAt(calendar.getTime())//设置过期时间
-                .sign(Algorithm.HMAC256("chiwhvbsugiw"));
+                .sign(Algorithm.HMAC256("cgh031024"));
         return token;
 
     }
@@ -34,7 +34,7 @@ public class JWTUtil {
     public static boolean verifyToken(String token){
         try {
             //验证token,验证不通过则报错 verify(token)验证token的方法 .build()构建一个验证方法
-            JWT.require(Algorithm.HMAC256("chiwhvbsugiw")).build().verify(token);
+            JWT.require(Algorithm.HMAC256("cgh031024")).build().verify(token);
             return true;
         }catch (Exception e){
             return false;
@@ -44,7 +44,7 @@ public class JWTUtil {
     public static Long getUserId(String token) {
         try {
             // 获取id，没有id则会报错
-            return JWT.require(Algorithm.HMAC256("chiwhvbsugiw")).build().verify(token).getClaim("userId").asLong();
+            return JWT.require(Algorithm.HMAC256("cgh031024")).build().verify(token).getClaim("userId").asLong();
         } catch (Exception e) {
             // 如果报错就返回null表示没有找到对应的用户
             return 0L;
@@ -57,7 +57,7 @@ public class JWTUtil {
             String token = request.getHeader("Authorization");
 
             // 获取id，没有id则会报错
-            return JWT.require(Algorithm.HMAC256("chiwhvbsugiw")).build().verify(request.getHeader(token)).getClaim("userId").asLong();
+            return JWT.require(Algorithm.HMAC256("cgh031024")).build().verify(request.getHeader(token)).getClaim("userId").asLong();
         } catch (Exception e) {
             // 如果报错就返回null表示没有找到对应的用户
             return 0L;

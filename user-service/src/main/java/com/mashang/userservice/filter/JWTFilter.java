@@ -56,7 +56,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // ---- 第2步：校验 JWT 签名 ----
         boolean b = JWTUtil.verifyToken(Authentication);
         if (!b) {
-            throw new RuntimeException("Token不合法");
+            throw new RuntimeException("Authentication不合法");
         }
 
         // ---- 第3步：从 Redis 获取用户会话信息 ----

@@ -50,27 +50,7 @@ public class LoginUser implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if (user.getRoleId() != null) {
-            switch (user.getRoleId().intValue()) {
-                case 1:  // admin
-                    authorities.add(new SimpleGrantedAuthority("admin"));
-                    authorities.add(new SimpleGrantedAuthority("referee"));
-                    authorities.add(new SimpleGrantedAuthority("athlete"));
-                    break;
-                case 2:  // referee
-                    authorities.add(new SimpleGrantedAuthority("referee"));
-                    authorities.add(new SimpleGrantedAuthority("athlete"));
-                    break;
-                case 3:  // athlete
-                    authorities.add(new SimpleGrantedAuthority("athlete"));
-                    break;
-                default:
-                    // 未知角色：不授予任何权限
-                    break;
-            }
-        }
-        return authorities;
+        return null;
     }
 
     // ==================== UserDetails 接口实现 ====================

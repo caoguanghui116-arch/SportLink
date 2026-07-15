@@ -23,7 +23,7 @@ public class AnnouncementServiceImpl extends ServiceImpl<AnnouncementMapper, Ann
         announcement.setTitle(query.getTitle());
         announcement.setContent(query.getContent());
         announcement.setMeetingId(query.getMeetingId());
-        announcement.setPublisherId(publisherId);
+        announcement.setPublisherUserId(publisherId);
         announcement.setStatus(0L);
         return announcementMapper.insert(announcement);
     }
