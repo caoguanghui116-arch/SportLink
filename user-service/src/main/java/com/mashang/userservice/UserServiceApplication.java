@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @MapperScan("com.mashang.userservice.mapper")
-@EnableDiscoveryClient
-@EnableFeignClients
+@EnableDiscoveryClient //nacos
+@EnableFeignClients //fegin
 public class UserServiceApplication {
 
     public static void main(String[] args) {

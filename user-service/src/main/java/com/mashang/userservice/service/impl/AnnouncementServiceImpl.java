@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.userservice.domain.entity.Announcement;
 import com.mashang.userservice.domain.query.create.AnnouncementQuery;
+import com.mashang.userservice.domain.query.update.AnnouncementUpdateQuery;
 import com.mashang.userservice.mapper.AnnouncementMapper;
 import com.mashang.userservice.service.IAnnouncementService;
+import com.mashang.userservice.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +20,20 @@ public class AnnouncementServiceImpl extends ServiceImpl<AnnouncementMapper, Ann
     private AnnouncementMapper announcementMapper;
 
     @Override
-    public int publish(AnnouncementQuery query, Long publisherId) {
+    public int publish(AnnouncementQuery query) {
+
         Announcement announcement = new Announcement();
         announcement.setTitle(query.getTitle());
         announcement.setContent(query.getContent());
         announcement.setMeetingId(query.getMeetingId());
-        announcement.setPublisherUserId(publisherId);
+        announcement.setPublishUserId(JWTUtil.getUserId());
         announcement.setStatus(0L);
         return announcementMapper.insert(announcement);
     }
 
     @Override
-    public int update(Announcement announcement) {
-        return announcementMapper.updateById(announcement);
+    public int update(AnnouncementUpdateQuery announcement) {
+        return announcementMapper.updateAnnouncement(announcement);
     }
 
     @Override
@@ -41,7 +44,6 @@ public class AnnouncementServiceImpl extends ServiceImpl<AnnouncementMapper, Ann
     @Override
     public List<Announcement> listAll() {
         LambdaQueryWrapper<Announcement> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Announcement::getDelFlag, 0).orderByDesc(Announcement::getCreateTime);
         return announcementMapper.selectList(wrapper);
     }
 

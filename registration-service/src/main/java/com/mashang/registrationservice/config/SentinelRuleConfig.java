@@ -44,7 +44,6 @@ public class SentinelRuleConfig implements CommandLineRunner {
 
     /**
      * 限流规则 —— 针对报名高峰场景设置 QPS 上限。
-     *
      * 设计依据：
      * - 个人报名 (200 QPS)：报名高峰期，假设 5000 人在线，平均 25 req/s，200 QPS 留有 8 倍余量
      * - 团队报名 (100 QPS)：低频操作，100 QPS 足够
@@ -81,7 +80,6 @@ public class SentinelRuleConfig implements CommandLineRunner {
 
     /**
      * 熔断降级规则 —— 慢调用比例熔断。
-     *
      * 触发条件（以个人报名为例）：
      * - 1秒内 ≥ 10 个请求
      * - 其中 ≥ 50% 的请求 RT > 200ms

@@ -41,7 +41,7 @@ import java.util.List;
 @Api(tags = "赛程安排")
 @RestController
 @RequestMapping("/schedule")
-public class ScheduleController {
+public class  ScheduleController {
 
     /** 场地服务接口 —— 提供所有场地的查询，用于赛程编排时选择场地 */
     @Autowired

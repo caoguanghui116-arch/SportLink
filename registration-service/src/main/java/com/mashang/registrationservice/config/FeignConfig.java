@@ -22,10 +22,10 @@ public class FeignConfig {
             }
 
             HttpServletRequest request = attributes.getRequest();
-            String token = request.getHeader("Authorization");
+            String token = request.getHeader("Authentication");
 
             if (token != null && !token.isEmpty()) {
-                requestTemplate.header("Authorization", token);
+                requestTemplate.header("Authentication", token);
             }
         };
     }

@@ -1,6 +1,5 @@
 package com.mashang.socialservice.feign;
 
-import com.mashang.socialservice.config.FeignConfig;
 import com.mashang.common.common.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +30,8 @@ import java.util.Map;
  * </ul>
  *
  * @author mashang
- * @see com.mashang.socialservice.config.FeignConfig 对应的 Feign 配置类
  */
-@FeignClient(name = "user-service", configuration = FeignConfig.class)
+@FeignClient(name = "user-service")
 public interface UserServiceFeign {
 
     /**

@@ -1,6 +1,5 @@
 package com.mashang.scoreservice.feign;
 
-import com.mashang.scoreservice.config.FeignConfig;
 import com.mashang.common.common.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +31,9 @@ import org.springframework.web.bind.annotation.GetMapping;
  *       或配置 Sentinel 熔断，在赛事服务不可用时返回空列表并提示用户</li>
  * </ul>
  *
- * @author mashang
- * @see com.mashang.scoreservice.config.FeignConfig 对应的 Feign 配置类
+ * @author mashan
  */
-@FeignClient(name = "event-service", configuration = FeignConfig.class)
+@FeignClient(name = "event-service")
 public interface EventServiceFeign {
 
     /**

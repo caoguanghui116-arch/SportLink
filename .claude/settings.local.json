@@ -7,7 +7,9 @@
       "Bash(mysql -u root -p123456 -h localhost -e \"USE ms_registration_service; SHOW TABLES;\")",
       "Bash(mysql -u root -p123456 -h localhost -e \"USE ms_score_service; SHOW TABLES;\")",
       "Bash(mysql -u root -p123456 -h localhost -e \"USE ms_social_service; SHOW TABLES;\")",
-      "Bash(mysql -u root -p123456 -h localhost -e \"USE ms_user_service; DESCRIBE sys_menu; DESCRIBE sys_role_menu; DESCRIBE athlete; DESCRIBE department; DESCRIBE team;\")"
+      "Bash(mysql -u root -p123456 -h localhost -e \"USE ms_user_service; DESCRIBE sys_menu; DESCRIBE sys_role_menu; DESCRIBE athlete; DESCRIBE department; DESCRIBE team;\")",
+      "Bash(javap -p D:/JavaMicroserviceComponents/SportLink/user-service/target/classes/com/mashang/userservice/config/SecurityConfig.class)",
+      "Bash(xargs grep -l \"com\\\\.mashang\\\\.\\\\\\(userservice\\\\|eventservice\\\\|registrationservice\\\\|scoreservice\\\\|socialservice\\\\|notificationservice\\\\|aiservice\\\\\\)\\\\.domain\\\\.entity\\\\.R\")"
     ]
   }
 }

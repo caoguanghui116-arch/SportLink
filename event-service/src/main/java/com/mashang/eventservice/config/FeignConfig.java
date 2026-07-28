@@ -27,12 +27,12 @@ public class FeignConfig {
             HttpServletRequest request = attributes.getRequest();
 
             // 3. 获取 token
-            String token = request.getHeader("Authorization");
+            String token = request.getHeader("Authentication");
 
             System.out.println("Original token = " + token);
             // 4. 透传 token 到 Feign 请求
             if (token != null && !token.isEmpty()) {
-                requestTemplate.header("Authorization", token);
+                requestTemplate.header("Authentication", token);
             }
         };
     }

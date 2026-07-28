@@ -3,6 +3,7 @@ package com.mashang.userservice.controller;
 import com.mashang.userservice.domain.entity.Announcement;
 import com.mashang.common.common.R;
 import com.mashang.userservice.domain.query.create.AnnouncementQuery;
+import com.mashang.userservice.domain.query.update.AnnouncementUpdateQuery;
 import com.mashang.userservice.service.IAnnouncementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -42,26 +43,24 @@ public class AnnouncementController {
      * 发布新公告
      *
      * @param query       公告请求体，包含 title、content、meetingId 等字段
-     * @param publisherId 发布人用户ID
      * @return 统一响应体，ok 表示发布成功
      */
     @ApiOperation("发布公告")
     @PostMapping
-    public R<Void> publish(@RequestBody @Validated AnnouncementQuery query,
-                        @RequestParam Long publisherId) {
-        return R.toResult(announcementService.publish(query, publisherId));
+    public R<Void> publish(@RequestBody @Validated AnnouncementQuery query) {
+        return R.toResult(announcementService.publish(query));
     }
 
     /**
      * 修改公告
      *
-     * @param announcement 公告实体，包含要更新的字段（id 必填）
+     * @param announcementQuery 公告修改参数实体，包含要更新的字段（id 必填）
      * @return 统一响应体，ok 表示修改成功
      */
     @ApiOperation("修改公告")
     @PutMapping
-    public R<Void> update(@RequestBody @Validated Announcement announcement) {
-        return R.toResult(announcementService.update(announcement));
+    public R<Void> update(@RequestBody @Validated AnnouncementUpdateQuery announcementQuery) {
+        return R.toResult(announcementService.update(announcementQuery));
     }
 
     /**

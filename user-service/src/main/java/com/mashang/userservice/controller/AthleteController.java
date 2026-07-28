@@ -2,6 +2,8 @@ package com.mashang.userservice.controller;
 
 import com.mashang.userservice.domain.entity.Athlete;
 import com.mashang.common.common.R;
+import com.mashang.userservice.domain.query.create.AthleteCreateQuery;
+import com.mashang.userservice.domain.query.update.AnnouncementUpdateQuery;
 import com.mashang.userservice.service.IAthleteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,7 +29,7 @@ import java.util.List;
  */
 @Api(tags = "运动员管理")
 @RestController
-@RequestMapping("/usercenter/athlete")
+@RequestMapping("/athlete")
 public class AthleteController {
 
     /** 运动员服务接口 */
@@ -42,7 +44,7 @@ public class AthleteController {
      */
     @ApiOperation("添加运动员")
     @PostMapping
-    public R<Void> add(@RequestBody @Validated Athlete athlete) {
+    public R<Void> add(@RequestBody @Validated AthleteCreateQuery athlete) {
         return R.toResult(athleteService.add(athlete));
     }
 
@@ -54,7 +56,7 @@ public class AthleteController {
      */
     @ApiOperation("修改运动员信息")
     @PutMapping
-    public R<Void> update(@RequestBody @Validated Athlete athlete) {
+    public R<Void> update(@RequestBody @Validated AnnouncementUpdateQuery athlete) {
         return R.toResult(athleteService.update(athlete));
     }
 

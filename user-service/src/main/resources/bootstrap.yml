@@ -1,0 +1,17 @@
+
+spring:
+  application:
+    name: user-service
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      config:
+        file-extension: yaml # 配置文件格式
+        shared-dataids:
+          - data-id: common.yaml # 多个微服务可以配置要引入的公共配置，有多个通用的配置可以用,分隔
+        username: nacos
+        password: cgh031024
+#        namespace: 命名空间 在环境上进行划分 开发、测试、部署环境 放命名空间id
+#        group: 区分组别的 功能上做划分
+  profiles:
+    active: dev # 环境标识

@@ -30,13 +30,13 @@ public class FeignConfig {
             jakarta.servlet.http.HttpServletRequest request = attributes.getRequest();
 
             // 3. Extract token from incoming request
-            String token = request.getHeader("Authorization");
+            String token = request.getHeader("Authentication");
 
             System.out.println("Feign passthrough token = " + token);
 
             // 4. Forward token to downstream Feign request
             if (token != null && !token.isEmpty()) {
-                requestTemplate.header("Authorization", token);
+                requestTemplate.header("Authentication", token);
             }
         };
     }

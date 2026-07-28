@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mashang.userservice.mapper.AthleteMapper">
+
+    <update id="updateAthlete">
+        UPDATE athlete
+        SET dept_id = #{deptId},
+            user_id = #{userId},
+            stu_no = #{stuNo},
+            `name` = #{name},
+            gender = #{gender},
+            phone = #{phone}
+        WHERE
+            athlete_id = #{athleteId};
+    </update>
+</mapper>

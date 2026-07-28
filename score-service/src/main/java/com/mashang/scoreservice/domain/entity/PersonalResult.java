@@ -22,7 +22,7 @@ public class PersonalResult {
     private Long userId;
     private Long itemId;
     private Long meetingId;
-    private BigDecimal score;
+    private Double score;
     private Long rank;
     private Long status;
     @TableField(fill = FieldFill.INSERT)

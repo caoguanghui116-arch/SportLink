@@ -1,9 +1,14 @@
 package com.mashang.userservice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mashang.userservice.domain.entity.Department;
 import com.mashang.userservice.domain.entity.Team;
+import com.mashang.userservice.domain.query.create.TeamCreateQuery;
+import com.mashang.userservice.domain.query.update.TeamUpdateQuery;
 import com.mashang.userservice.mapper.TeamMapper;
+import com.mashang.userservice.mapping.TeamMapping;
 import com.mashang.userservice.service.ITeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -83,7 +88,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements IT
      * @throws RuntimeException 当团体名称已存在时抛出
      */
     @Override
-    public int add(Team team) {
+    public int add(TeamCreateQuery team) {
+
         // 团体名称唯一性校验：查询同名记录
         LambdaQueryWrapper<Team> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Team::getTeamName, team.getTeamName());
@@ -92,7 +98,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements IT
         }
 
         // 写入数据库
-        int result = teamMapper.insert(team);
+        int result = teamMapper.insert(TeamMapping.INSTANCE.team(team));
 
         // 写入成功后删除缓存（Cache Aside 写模式：淘汰缓存而非更新缓存）
         if (result > 0) {
@@ -110,8 +116,15 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements IT
      * @return 影响行数（>0 表示修改成功）
      */
     @Override
-    public int update(Team team) {
-        int result = teamMapper.updateById(team);
+    public int update(TeamUpdateQuery team) {
+
+        LambdaUpdateWrapper<Team> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Team::getTeamId,team.getTeamId())
+                .set(Team::getDeptId,team.getDeptId())
+                .set(Team::getCaptainId,team.getCaptainId())
+                .set(Team::getTeamName,team.getTeamName());
+
+        int result = teamMapper.update(null,updateWrapper);
         if (result > 0) {
             evictCache();
         }

@@ -5,6 +5,7 @@ import com.mashang.userservice.domain.entity.SysUser;
 import com.mashang.userservice.domain.query.LoginUserQuery;
 import com.mashang.userservice.domain.query.create.RegisterUserQuery;
 import com.mashang.userservice.service.IUserService;
+import com.mashang.userservice.utils.JWTUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -96,5 +97,12 @@ public class UserController {
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true)
     public R<SysUser> getUserInfo(@PathVariable Long userId) {
         return R.ok(userService.getById(userId));
+    }
+
+    @ApiOperation("获取用户id(fegin)")
+    @GetMapping("/userId")
+    public Long getUserId() {
+
+        return JWTUtil.getUserId();
     }
 }

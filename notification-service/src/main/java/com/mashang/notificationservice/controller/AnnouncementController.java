@@ -4,7 +4,6 @@ import com.mashang.common.common.R;
 import com.mashang.notificationservice.domain.query.create.AnnouncementQuery;
 import com.mashang.notificationservice.domain.vo.AnnouncementVo;
 import com.mashang.notificationservice.service.IAnnouncementService;
-import com.mashang.notificationservice.utils.JWTUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -65,7 +64,8 @@ public class AnnouncementController {
     @ApiOperation("发布公告")
     @PostMapping
     public R<?> publish(HttpServletRequest request, @RequestBody @Validated AnnouncementQuery query) {
-        Long userId = JWTUtil.getUserId(request);
+
+        Long userId = Long.valueOf(request.getHeader("X-User-Id"));
         if (userId == 0L) {
             return R.fail("未登录或登录已过期");
         }

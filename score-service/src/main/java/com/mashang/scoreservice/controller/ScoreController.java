@@ -64,6 +64,7 @@ public class ScoreController {
     @ApiOperation("个人成绩录入")
     @PostMapping("/personal")
     public R<Void> personalEntry(@RequestBody @Validated PersonalResultQuery query) {
+
         // 执行个人成绩录入
         int result = personalResultService.entry(query);
         // 录入成功后，通过 MQ 发送成绩发布通知，供通知服务消费处理
@@ -159,13 +160,12 @@ public class ScoreController {
      * 按用户 ID 查询该用户在所有项目中取得的成绩。
      * 使用场景：用户在个人中心查看自己的参赛成绩列表。
      *
-     * @param userId 用户ID，唯一标识一个用户
      * @return 该用户所有个人成绩的 VO 列表
      */
     @ApiOperation("查询用户个人成绩")
-    @GetMapping("/personal/user/{userId}")
-    @ApiImplicitParam(name = "userId", value = "用户ID", required = true)
-    public R<List<PersonalResultVo>> userScores(@PathVariable Long userId) {
-        return R.ok(personalResultService.listByUserId(userId));
+    @GetMapping("/personal/user")
+
+    public R<List<PersonalResultVo>> userScores() {
+        return R.ok(personalResultService.listByUserId());
     }
 }

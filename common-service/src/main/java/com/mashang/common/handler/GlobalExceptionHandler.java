@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     /**
      * 处理业务异常（ServiceException）。
      * Service 层抛出 ServiceException 时，直接将其 code 和 message 转换为 R 返回。
-     * 日志级别为 ERROR，因为业务异常通常需要关注（如重复注册、越权操作）。
+     * 日志级别为 ERROR，因为业务异常通常需要关注（如重复注册、越权操作）。 
      *
      * @param e 业务异常
      * @return R 包含异常的状态码和消息

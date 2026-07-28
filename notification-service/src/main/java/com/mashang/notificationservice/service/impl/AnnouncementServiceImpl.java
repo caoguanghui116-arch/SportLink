@@ -42,7 +42,9 @@ public class AnnouncementServiceImpl extends ServiceImpl<AnnouncementMapper, Ann
 
     @Override
     public int update(Long announcementId, AnnouncementQuery query) {
-        Announcement announcement = announcementMapper.selectById(announcementId);
+        AnnouncementVo announcementVo = announcementMapper.selectById(announcementId);
+        Announcement announcement = AnnouncementMapping.INSTANCE.entity(announcementVo);
+
         if (announcement == null) {
             throw new RuntimeException("公告不存在");
         }

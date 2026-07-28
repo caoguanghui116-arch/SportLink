@@ -81,7 +81,7 @@ public class AIServiceImpl implements IAIService {
             }
 
             // Also get registration info to show which events the user is signed up for
-            Map<String, Object> regData = registrationServiceFeign.getRegistrationInfo(userId, 1L);
+            Map<String, Object> regData = registrationServiceFeign.getRegistrationInfo(userId);
             if (regData != null && !regData.containsKey("error")) {
                 contextBuilder.append("报名数据: ").append(JSON.toJSONString(regData)).append("\n");
             }
@@ -90,7 +90,7 @@ public class AIServiceImpl implements IAIService {
         if (containsAny(question, "成绩", "排名", "结果", "score", "result", "ranking", "第几名")) {
             log.info("Intent detected: score/ranking query");
 
-            Map<String, Object> scoreData = scoreServiceFeign.getPersonalResult(userId, 1L);
+            Map<String, Object> scoreData = scoreServiceFeign.getPersonalResult(userId);
             if (scoreData != null && !scoreData.containsKey("error")) {
                 contextBuilder.append("成绩数据: ").append(JSON.toJSONString(scoreData)).append("\n");
             } else {
@@ -101,7 +101,7 @@ public class AIServiceImpl implements IAIService {
         if (containsAny(question, "报名", "注册", "register", "参赛", "项目")) {
             log.info("Intent detected: registration/event query");
 
-            Map<String, Object> regData = registrationServiceFeign.getRegistrationInfo(userId, 1L);
+            Map<String, Object> regData = registrationServiceFeign.getRegistrationInfo(userId);
             if (regData != null && !regData.containsKey("error")) {
                 contextBuilder.append("报名数据: ").append(JSON.toJSONString(regData)).append("\n");
             } else {

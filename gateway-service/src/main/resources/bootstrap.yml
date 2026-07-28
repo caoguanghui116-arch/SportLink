@@ -1,0 +1,80 @@
+# ================================================================
+# Gateway 网关服务配置
+# 职责：统一入口、JWT 鉴权、路由转发、跨域处理
+# 端口 10000，所有客户端请求统一走网关，不再直连业务服务
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    # ---------- Nacos 服务注册 & 配置中心 ----------
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml           # 配置文件格式（yaml / properties）
+  profiles:
+    active: dev # 环境标识
+
+  #      routes:
+  #        # ---- 用户服务：登录/注册/个人信息/运动员/裁判/部门/团队 ----
+  #        - id: user-service
+  #          uri: lb://user-service       # lb:// 表示从 Nacos 获取实例列表并负载均衡
+  #          predicates:
+  #            - Path=/user/**,/usercenter/**,/referee/**,/system/**,/announcement/**
+  #          filters:
+  #            - StripPrefix=0            # 不剥离路径前缀，原样转发
+  #
+  #        # ---- 赛事服务：运动会/项目/赛程/场地/积分规则 ----
+  #        - id: event-service
+  #          uri: lb://event-service
+  #          predicates:
+  #            - Path=/basic/**,/schedule/**
+  #          filters:
+  #            - StripPrefix=0
+  #
+  #        # ---- 报名服务：个人报名/团队报名 ----
+  #        - id: registration-service
+  #          uri: lb://registration-service
+  #          predicates:
+  #            - Path=/registration/**
+  #          filters:
+  #            - StripPrefix=0
+  #
+  #        # ---- 成绩服务：成绩录入/排行榜/奖项 ----
+  #        - id: score-service
+  #          uri: lb://score-service
+  #          predicates:
+  #            - Path=/score/**,/award/**,/ranking/**
+  #          filters:
+  #            - StripPrefix=0
+  #
+  #        # ---- 社交服务：动态/评论/弹幕 ----
+  #        - id: social-service
+  #          uri: lb://social-service
+  #          predicates:
+  #            - Path=/post/**,/comment/**,/bullet/**
+  #          filters:
+  #            - StripPrefix=0
+  #
+  #        # ---- 通知服务：通知/公告 ----
+  #        - id: notification-service
+  #          uri: lb://notification-service
+  #          predicates:
+  #            - Path=/notification/**,/announcement/**
+  #          filters:
+  #            - StripPrefix=0
+  #
+  #        # ---- AI 服务：智能问答/公告生成/成绩分析/客服 ----
+  #        - id: ai-service
+  #          uri: lb://ai-service
+  #          predicates:
+  #            - Path=/ai/**
+  #          filters:
+  #            - StripPrefix=0
+
+
+
+# ================================================================
+# 网关鉴权白名单 —— 以下路径不拦截 JWT 校验
+# ================================================================
+

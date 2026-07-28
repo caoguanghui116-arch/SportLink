@@ -86,7 +86,7 @@ public class Knife4jConfig {
     private List<SecurityScheme> securitySchemes()
     {
         List<SecurityScheme> apiKeyList = new ArrayList<SecurityScheme>();
-        apiKeyList.add(new ApiKey("Authorization", "Authorization", In.HEADER.toValue()));
+        apiKeyList.add(new ApiKey("Authentication", "Authentication", In.HEADER.toValue()));
         return apiKeyList;
     }
 
@@ -117,7 +117,7 @@ public class Knife4jConfig {
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
         List<SecurityReference> securityReferences = new ArrayList<>();
-        securityReferences.add(new SecurityReference("Authorization", authorizationScopes));
+        securityReferences.add(new SecurityReference("Authentication", authorizationScopes));
         return securityReferences;
     }
 }

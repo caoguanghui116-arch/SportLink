@@ -33,10 +33,9 @@ public interface IPersonalResultService extends IService<PersonalResult> {
 
     /**
      * 查询用户个人成绩
-     * @param userId 用户id
      * @return 成绩列表
      */
-    List<PersonalResultVo> listByUserId(Long userId);
+    List<PersonalResultVo> listByUserId();
 
     /**
      * 查询排行榜（Redis Cache-Aside）

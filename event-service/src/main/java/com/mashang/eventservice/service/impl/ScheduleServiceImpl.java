@@ -43,10 +43,6 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     public int addSchedule(ScheduleQuery scheduleQuery) {
         int rows = scheduleMapper.insert(ScheduleMapping.INSTANCE.toEntity(scheduleQuery));
 
-        // 新增后清除赛程缓存（按运动会维度）
-        if (rows > 0 && scheduleQuery.getMeetingId() != null) {
-            redisTemplate.delete(KeyCommon.buildScheduleKey(scheduleQuery.getMeetingId()));
-        }
         return rows;
     }
 

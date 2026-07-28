@@ -9,6 +9,7 @@ import com.mashang.scoreservice.domain.entity.PersonalResult;
 import com.mashang.scoreservice.domain.query.create.PersonalResultQuery;
 import com.mashang.scoreservice.domain.vo.PersonalResultVo;
 import com.mashang.scoreservice.domain.vo.RankingVo;
+import com.mashang.scoreservice.feign.UserServiceFeign;
 import com.mashang.scoreservice.mapper.PersonalResultMapper;
 import com.mashang.scoreservice.mapping.ScoreMapping;
 import com.mashang.scoreservice.service.IPersonalResultService;
@@ -27,6 +28,9 @@ public class PersonalResultServiceImpl extends ServiceImpl<PersonalResultMapper,
 
     @Autowired
     private PersonalResultMapper personalResultMapper;
+
+    @Autowired
+    private UserServiceFeign userServiceFeign;
 
     @Override
     public int entry(PersonalResultQuery query) {
@@ -77,8 +81,8 @@ public class PersonalResultServiceImpl extends ServiceImpl<PersonalResultMapper,
     }
 
     @Override
-    public List<PersonalResultVo> listByUserId(Long userId) {
-        return personalResultMapper.selectByUserId(userId);
+    public List<PersonalResultVo> listByUserId() {
+        return personalResultMapper.selectByUserId(userServiceFeign.getUserId());
     }
 
     @Override

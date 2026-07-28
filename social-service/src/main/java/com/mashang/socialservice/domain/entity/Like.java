@@ -19,6 +19,8 @@ public class Like {
 
   @TableId(type = IdType.AUTO)
   private Long likeId;
+
+  //统一点赞表设计 =1点赞的是帖子 =2点赞的是评论
   private Long targetType;
   private Long targetId;
   private Long userId;

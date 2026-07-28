@@ -52,7 +52,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     private StringRedisTemplate stringRedisTemplate;
 
     /** JWT 签名密钥（与 user-service 的 JWTUtil 保持一致） */
-    private static final String JWT_SECRET = "chiwhvbsugiw";
+    private static final String JWT_SECRET = "cgh031024";
 
     /** Ant 风格路径匹配器：支持 /user/** 通配符 */
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -62,6 +62,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
@@ -71,7 +72,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         }
 
         // ---- 第2步：获取 Token ----
-        String token = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String token = request.getHeaders().getFirst("Authentication");
         if (token == null || token.isEmpty()) {
             return unauthorizedResponse(exchange, "未提供认证令牌");
         }

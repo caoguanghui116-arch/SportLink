@@ -1,9 +1,13 @@
 package com.mashang.userservice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.userservice.domain.entity.Department;
+import com.mashang.userservice.domain.query.create.DepartmentCreateQuerry;
+import com.mashang.userservice.domain.query.update.DepartmentUpdateQuerry;
 import com.mashang.userservice.mapper.DepartmentMapper;
+import com.mashang.userservice.mapping.DepartmentMapping;
 import com.mashang.userservice.service.IDepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -85,7 +89,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
      * @throws RuntimeException 当院系名称已存在时抛出
      */
     @Override
-    public int add(Department department) {
+    public int add(DepartmentCreateQuerry department) {
         // 院系名称唯一性校验
         LambdaQueryWrapper<Department> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Department::getDeptName, department.getDeptName());
@@ -94,7 +98,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         }
 
         // 写入数据库
-        int result = departmentMapper.insert(department);
+        int result = departmentMapper.insert(DepartmentMapping.INSTANCE.department(department));
 
         // 写入成功后删除缓存（Cache Aside 写模式：淘汰缓存而非更新缓存）
         if (result > 0) {
@@ -112,8 +116,14 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
      * @return 影响行数（>0 表示修改成功）
      */
     @Override
-    public int update(Department department) {
-        int result = departmentMapper.updateById(department);
+    public int update(DepartmentUpdateQuerry department) {
+        LambdaUpdateWrapper<Department> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Department::getDeptId,department.getDeptId())
+                .set(Department::getParentId,department.getDeptId())
+                .set(Department::getDeptName,department.getDeptName())
+                .set(Department::getSort,department.getSort());
+
+        int result = departmentMapper.update(null,updateWrapper);
         if (result > 0) {
             evictCache();
         }

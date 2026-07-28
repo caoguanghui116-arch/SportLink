@@ -2,6 +2,8 @@ package com.mashang.userservice.controller;
 
 import com.mashang.common.common.R;
 import com.mashang.userservice.domain.entity.Team;
+import com.mashang.userservice.domain.query.create.TeamCreateQuery;
+import com.mashang.userservice.domain.query.update.TeamUpdateQuery;
 import com.mashang.userservice.service.ITeamService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,7 +30,7 @@ import java.util.List;
  */
 @Api(tags = "团体管理")
 @RestController
-@RequestMapping("/usercenter/team")
+@RequestMapping("/team")
 public class TeamController {
 
     /** 团体服务接口 */
@@ -45,7 +47,7 @@ public class TeamController {
      */
     @ApiOperation("添加团体")
     @PostMapping
-    public R<Void> add(@RequestBody @Validated Team team) {
+    public R<Void> add(@RequestBody @Validated TeamCreateQuery team) {
         return R.toResult(teamService.add(team));
     }
 
@@ -57,7 +59,7 @@ public class TeamController {
      */
     @ApiOperation("修改团体信息")
     @PutMapping
-    public R<Void> update(@RequestBody @Validated Team team) {
+    public R<Void> update(@RequestBody @Validated TeamUpdateQuery team) {
         return R.toResult(teamService.update(team));
     }
 

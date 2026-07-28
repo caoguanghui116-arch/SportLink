@@ -65,14 +65,24 @@ public class JWTUtil {
     }
 
     //获取Id
+//    public static Long getUserId() {
+//
+//        return   ((SysUser) SecurityContextHolder.getContext()
+//                .getAuthentication()
+//                .getPrincipal()).getUserId();
+//
+//    }
+
+    // 获取用户Id
     public static Long getUserId() {
-        return   ((SysUser) SecurityContextHolder.getContext()
+
+        LoginUser loginUser = (LoginUser) SecurityContextHolder
+                .getContext()
                 .getAuthentication()
-                .getPrincipal()).getUserId();
+                .getPrincipal();
 
+        return loginUser.getUser().getUserId();
     }
-
-
     //Feign 传递 token（你很可能会用到）
 //
 //    @Configuration

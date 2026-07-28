@@ -3,7 +3,10 @@ package com.mashang.userservice.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mashang.userservice.domain.entity.Athlete;
+import com.mashang.userservice.domain.query.create.AthleteCreateQuery;
+import com.mashang.userservice.domain.query.update.AnnouncementUpdateQuery;
 import com.mashang.userservice.mapper.AthleteMapper;
+import com.mashang.userservice.mapping.AthleteMapping;
 import com.mashang.userservice.service.IAthleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -77,9 +80,10 @@ public class AthleteServiceImpl extends ServiceImpl<AthleteMapper, Athlete> impl
      * @return 影响行数（>0 表示添加成功）
      */
     @Override
-    public int add(Athlete athlete) {
+    public int add(AthleteCreateQuery athlete) {
+
         // 先写入数据库
-        int result = athleteMapper.insert(athlete);
+        int result = athleteMapper.insert(AthleteMapping.INSTANCE.athlete(athlete));
         // 写入成功后删除缓存（Cache Aside 写模式：淘汰缓存而非更新缓存）
         if (result > 0) {
             evictCache();
@@ -96,9 +100,10 @@ public class AthleteServiceImpl extends ServiceImpl<AthleteMapper, Athlete> impl
      * @return 影响行数（>0 表示修改成功）
      */
     @Override
-    public int update(Athlete athlete) {
+    public int update(AnnouncementUpdateQuery athlete) {
+
         // 先更新数据库
-        int result = athleteMapper.updateById(athlete);
+        int result = athleteMapper.updateAthlete(athlete);
         // 更新成功后删除缓存
         if (result > 0) {
             evictCache();

@@ -2,6 +2,8 @@ package com.mashang.userservice.controller;
 
 import com.mashang.userservice.domain.entity.Department;
 import com.mashang.common.common.R;
+import com.mashang.userservice.domain.query.create.DepartmentCreateQuerry;
+import com.mashang.userservice.domain.query.update.DepartmentUpdateQuerry;
 import com.mashang.userservice.service.IDepartmentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,7 +29,7 @@ import java.util.List;
  */
 @Api(tags = "院系管理")
 @RestController
-@RequestMapping("/usercenter/department")
+@RequestMapping("/department")
 public class DepartmentController {
 
     /** 院系服务接口 */
@@ -44,7 +46,7 @@ public class DepartmentController {
      */
     @ApiOperation("添加院系")
     @PostMapping
-    public R<Void> add(@RequestBody @Validated Department department) {
+    public R<Void> add(@RequestBody @Validated DepartmentCreateQuerry department) {
         return R.toResult(departmentService.add(department));
     }
 
@@ -56,7 +58,7 @@ public class DepartmentController {
      */
     @ApiOperation("修改院系")
     @PutMapping
-    public R<Void> update(@RequestBody @Validated Department department) {
+    public R<Void> update(@RequestBody @Validated DepartmentUpdateQuerry department) {
         return R.toResult(departmentService.update(department));
     }
 

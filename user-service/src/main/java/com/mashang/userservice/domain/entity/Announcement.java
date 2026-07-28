@@ -22,7 +22,7 @@ public class Announcement {
     private String title;
     private String content;
     private Long meetingId;
-    private Long publisherUserId;
+    private Long publishUserId;
     private Long status;
     private Date createTime;
     private Date updateTime;

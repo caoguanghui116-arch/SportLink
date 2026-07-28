@@ -21,7 +21,7 @@ public class TeamResult {
     private Long teamEntryId;
     private Long itemId;
     private Long meetingId;
-    private BigDecimal score;
+    private Double score;
     private Long rank;
     private Long status;
     @TableField(fill = FieldFill.INSERT)
